@@ -1,0 +1,69 @@
+# ---------------------------------------------------------------------------
+# AgriVision AI - local development stack
+#
+#   docker compose up -d mongodb        # optional local MongoDB
+#   docker compose --profile app up -d  # the whole application
+#
+# The `app` profile builds the FastAPI image and the React image.  MongoDB
+# Atlas is still the recommended production data store - the local container
+# exists so the project can be run without any cloud credentials.
+# ---------------------------------------------------------------------------
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: agrivision-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: agrivision_ai
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    profiles: ["app"]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: agrivision-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      ENVIRONMENT: development
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DB_NAME: agrivision_ai
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-development-only-not-for-production}
+      FRONTEND_URL: http://localhost:5173
+      BACKEND_URL: http://localhost:8000
+      COOKIE_SECURE: "false"
+      DEVICE: cpu
+    volumes:
+      - ./backend/data:/app/data
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  web:
+    profiles: ["app"]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: agrivision-web
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: /api/v1
+      BACKEND_URL: http://api:8000
+    depends_on:
+      - api
+
+volumes:
+  mongodb_data:

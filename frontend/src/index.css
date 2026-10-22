@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 150 12% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 150 12% 12%;
+    --muted: 140 16% 96%;
+    --muted-foreground: 150 8% 42%;
+    --border: 140 12% 88%;
+    --input: 140 12% 88%;
+    --ring: 122 45% 38%;
+    --primary: 122 45% 38%;
+    --primary-foreground: 0 0% 100%;
+    --accent: 28 45% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 145 63% 33%;
+    --warning: 38 92% 45%;
+    --radius: 0.85rem;
+  }
+
+  .dark {
+    --background: 150 14% 7%;
+    --foreground: 140 18% 94%;
+    --card: 150 12% 10%;
+    --card-foreground: 140 18% 94%;
+    --muted: 150 10% 16%;
+    --muted-foreground: 145 10% 62%;
+    --border: 150 8% 20%;
+    --input: 150 8% 20%;
+    --ring: 122 45% 52%;
+    --primary: 122 45% 52%;
+    --primary-foreground: 150 20% 8%;
+    --accent: 28 55% 58%;
+    --accent-foreground: 150 20% 8%;
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 145 55% 50%;
+    --warning: 38 90% 58%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-brand-500/25;
+  }
+
+  /* A calm, non-intrusive scrollbar. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full border-2 border-solid border-transparent bg-border bg-clip-padding;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/40 bg-clip-padding;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply border border-border/70 bg-card/80 backdrop-blur-xl;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-br from-brand-500 via-brand-400 to-earth-500 bg-clip-text text-transparent;
+  }
+
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  .skeleton {
+    @apply relative overflow-hidden rounded-md bg-muted;
+  }
+
+  .skeleton::after {
+    @apply absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-foreground/10 to-transparent;
+    content: '';
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

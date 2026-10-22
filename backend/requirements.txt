@@ -1,0 +1,51 @@
+# ---------------------------------------------------------------------------
+# AgriVision AI - Backend runtime dependencies
+# Target interpreter: CPython 3.10.x
+# Install with:  pip install -r requirements.txt
+# ---------------------------------------------------------------------------
+
+# --- Web framework -------------------------------------------------------
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+email-validator==2.2.0
+
+# --- Configuration / validation -----------------------------------------
+pydantic==2.10.4
+pydantic-settings==2.7.0
+python-dotenv==1.0.1
+
+# --- Database ------------------------------------------------------------
+# PyMongo 4.11 exposes the production-ready async driver (AsyncMongoClient),
+# so the legacy `motor` package is not required.
+pymongo==4.11.3
+
+# --- Security ------------------------------------------------------------
+PyJWT==2.10.1
+argon2-cffi==23.1.0
+
+# --- Image processing ----------------------------------------------------
+Pillow==11.0.0
+opencv-python-headless==4.10.0.84
+
+# --- Machine learning ----------------------------------------------------
+# tensorflow-cpu is used instead of `tensorflow` because this project runs
+# CPU-only inference in production. Swap for `tensorflow==2.19.1` if a GPU
+# runtime is required (CUDA wheels are not pinned here on purpose).
+tensorflow-cpu==2.19.1
+# NOTE: numpy is pinned to 2.1.3 because TensorFlow 2.19 requires numpy < 2.2.
+# scikit-learn 1.5.2 wheels are numpy-2 ABI compatible (verified by the test
+# suite in backend/tests/test_ml_pipeline.py).
+numpy==2.1.3
+scikit-learn==1.5.2
+scipy==1.15.0
+pandas==2.2.3
+joblib==1.4.2
+
+# --- HTTP client (weather provider) --------------------------------------
+httpx==0.28.1
+
+# --- Testing -------------------------------------------------------------
+pytest==8.3.4
+pytest-asyncio==0.25.0
+pytest-cov==6.0.0

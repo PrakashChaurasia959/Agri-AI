@@ -1,0 +1,11 @@
+# ---------------------------------------------------------------------------
+# AgriVision AI - Backend development / training extras
+# Install with:  pip install -r requirements.txt -r requirements-dev.txt
+# ---------------------------------------------------------------------------
+
+-r requirements.txt
+
+# Interactive tooling for notebooks / debugging the ML pipeline
+ipykernel==6.29.5
+matplotlib==3.9.2
+seaborn==0.13.2
