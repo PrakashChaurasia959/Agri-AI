@@ -283,6 +283,45 @@ class AuthService:
             )
         await self._users.update_password(user_id, hash_password(new_password))
 
+    async def request_password_reset(self, email: str) -> None:
+        """Request a password reset - always returns without leaking account existence."""
+        normalised_email = email.strip().lower()
+        user = await self._users.get_by_email(normalised_email)
+        if user is None:
+            # Do not leak whether user exists
+            return
+        # For now, just log - in production would send email with token
+        logger.info("Password reset requested for %s", normalised_email)
+        return
+
+    async def reset_password(self, token: str, new_password: str) -> None:
+        """Reset password with token."""
+        if not token or not new_password:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid or expired reset token.",
+            )
+        if len(new_password) < 8:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Password must be at least 8 characters long.",
+            )
+        if not any(char.isalpha() for char in new_password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Password must contain at least one letter.",
+            )
+        if not any(char.isdigit() for char in new_password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Password must contain at least one number.",
+            )
+        # For now, reject - implement token storage in production
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired reset token.",
+        )
+
 
 # A syntactically valid Argon2 hash of a random value.  It is used so that
 # the login path performs a real hash verification even when the account does

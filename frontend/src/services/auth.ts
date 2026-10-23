@@ -30,4 +30,10 @@ export const authService = {
 
   changePassword: (payload: ChangePasswordPayload) =>
     api.post<MessageResponse>('/auth/change-password', payload),
+
+  forgotPassword: (email: string) =>
+    api.post<MessageResponse>('/auth/forgot-password', { email }),
+
+  resetPassword: (payload: { token: string; password: string }) =>
+    api.post<MessageResponse>('/auth/reset-password', payload),
 };

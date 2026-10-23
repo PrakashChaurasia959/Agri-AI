@@ -238,3 +238,44 @@ async def change_password(
         new_password=payload.new_password,
     )
     return MessageResponse(message="Your password has been updated.")
+
+
+@router.post(
+    "/forgot-password",
+    response_model=MessageResponse,
+    summary="Request a password reset",
+)
+async def forgot_password(
+    payload: dict,
+    request: Request,
+    _: DatabaseDep = None,
+) -> MessageResponse:
+    """Request a password reset link."""
+    settings = get_settings()
+    enforce_rate_limit(request, AUTH_RATE_RULE, enabled=settings.rate_limit_enabled)
+    service = _get_service()
+    await service.request_password_reset(payload.get("email", ""))
+    return MessageResponse(
+        message="If an account exists with that email, a password reset link has been sent."
+    )
+
+
+@router.post(
+    "/reset-password",
+    response_model=MessageResponse,
+    summary="Reset password with token",
+)
+async def reset_password(
+    payload: dict,
+    request: Request,
+    _: DatabaseDep = None,
+) -> MessageResponse:
+    """Reset password using a valid token."""
+    settings = get_settings()
+    enforce_rate_limit(request, AUTH_RATE_RULE, enabled=settings.rate_limit_enabled)
+    service = _get_service()
+    await service.reset_password(
+        token=payload.get("token", ""),
+        new_password=payload.get("password", ""),
+    )
+    return MessageResponse(message="Your password has been reset successfully.")

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ArrowRight, Lock, Mail, MapPin, User as UserIcon } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Lock, Mail, MapPin, User as UserIcon } from 'lucide-react';
 
 import { Brand } from '@/components/layout/Brand';
 import { Button } from '@/components/ui/Button';
@@ -41,6 +41,8 @@ export function RegisterPage() {
   const toast = useToast();
   const navigate = useNavigate();
   const [serverError, setServerError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -93,9 +95,9 @@ export function RegisterPage() {
         <div className="mx-auto w-full max-w-md">
           <Brand className="mb-10" />
 
-          <h1 className="font-display text-3xl font-bold tracking-tight">Create your account</h1>
+          <h1 className="font-display text-3xl font-bold tracking-tight">Join Agri-AI</h1>
           <p className="mt-2 text-muted-foreground">
-            Free to use. Your predictions are saved privately to your own dashboard.
+            Start your smart farming journey with AI-powered insights.
           </p>
 
           {serverError ? (
@@ -124,15 +126,37 @@ export function RegisterPage() {
               {...register('email')}
             />
 
-            <Input
-              label="Password"
-              type="password"
-              autoComplete="new-password"
-              placeholder="At least 8 characters"
-              icon={<Lock className="h-4 w-4" aria-hidden="true" />}
-              error={errors.password?.message}
-              {...register('password')}
-            />
+            <div className="space-y-1.5">
+              <label htmlFor="password" className="text-sm font-medium text-foreground">
+                Password
+              </label>
+              <div className="relative">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  <Lock className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  placeholder="At least 8 characters"
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2 pl-9 pr-10 text-sm text-foreground shadow-sm transition placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60"
+                  {...register('password')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              {errors.password?.message ? (
+                <p className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
+                  {errors.password?.message}
+                </p>
+              ) : null}
+            </div>
 
             {password ? (
               <div className="space-y-1.5">
@@ -152,15 +176,37 @@ export function RegisterPage() {
               </div>
             ) : null}
 
-            <Input
-              label="Confirm password"
-              type="password"
-              autoComplete="new-password"
-              placeholder="Repeat your password"
-              icon={<Lock className="h-4 w-4" aria-hidden="true" />}
-              error={errors.confirmPassword?.message}
-              {...register('confirmPassword')}
-            />
+            <div className="space-y-1.5">
+              <label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">
+                Confirm password
+              </label>
+              <div className="relative">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  <Lock className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  placeholder="Repeat your password"
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2 pl-9 pr-10 text-sm text-foreground shadow-sm transition placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60"
+                  {...register('confirmPassword')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              {errors.confirmPassword?.message ? (
+                <p className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
+                  {errors.confirmPassword?.message}
+                </p>
+              ) : null}
+            </div>
 
             <Input
               label="Location (optional)"

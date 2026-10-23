@@ -13,6 +13,7 @@ import {
 import { Brand } from '@/components/layout/Brand';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Spinner';
+import { ImageCarousel } from '@/components/ui/ImageCarousel';
 import { useAsync } from '@/hooks/useAsync';
 import { systemService } from '@/services';
 import { formatMetric, formatPercent } from '@/utils/format';
@@ -74,47 +75,51 @@ export function LandingPage() {
           <div className="mx-auto max-w-3xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-brand-500/30 bg-brand-500/10 px-3 py-1 text-xs font-medium text-brand-700 dark:text-brand-300">
               <Activity className="h-3.5 w-3.5" aria-hidden="true" />
-              Deep learning for smallholder agriculture
+              Smart Farming, Better Future
             </span>
             <h1 className="mt-6 font-display text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-              Diagnose disease, choose the right crop and{' '}
-              <span className="gradient-text">forecast your harvest</span>
+              Smart Farming Starts with{' '}
+              <span className="gradient-text">Artificial Intelligence</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg">
-              AgriVision AI turns a leaf photograph, a soil reading and a weather
-              forecast into decisions you can act on. Every model was trained on real
-              datasets and every number the platform shows is a measured metric - never
-              an estimate presented as a fact.
+              Agri-AI empowers farmers with AI-powered crop disease detection, smart crop recommendations, 
+              yield predictions, and real-time weather insights to maximize productivity and sustainability.
             </p>
             <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
                 to="/register"
-                className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-brand-600 px-7 text-base font-medium text-white shadow-sm transition hover:bg-brand-700"
+                className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 px-7 text-base font-medium text-white shadow-lg transition hover:from-brand-700 hover:to-brand-600 hover:shadow-glow"
               >
-                Create a free account
+                Detect Crop Disease
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
               <Link
                 to="/login"
                 className="focus-ring inline-flex h-12 items-center justify-center rounded-xl border border-border bg-card px-7 text-base font-medium transition hover:bg-muted"
               >
-                Sign in
+                Explore Smart Farming
               </Link>
+            </div>
+          </div>
+
+          <div className="mx-auto mt-16 max-w-6xl">
+            <div className="relative h-[400px] sm:h-[500px] lg:h-[600px]">
+              <ImageCarousel />
             </div>
           </div>
 
           <div className="mx-auto mt-16 grid max-w-5xl gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-border bg-card/70 p-6 text-center backdrop-blur">
               <p className="font-display text-3xl font-bold">38</p>
-              <p className="mt-1 text-sm text-muted-foreground">disease classes</p>
+              <p className="mt-1 text-sm text-muted-foreground">Disease Classes</p>
             </div>
             <div className="rounded-2xl border border-border bg-card/70 p-6 text-center backdrop-blur">
               <p className="font-display text-3xl font-bold">22</p>
-              <p className="mt-1 text-sm text-muted-foreground">crops ranked per query</p>
+              <p className="mt-1 text-sm text-muted-foreground">Crops Supported</p>
             </div>
             <div className="rounded-2xl border border-border bg-card/70 p-6 text-center backdrop-blur">
-              <p className="font-display text-3xl font-bold">100%</p>
-              <p className="mt-1 text-sm text-muted-foreground">of displayed metrics are measured</p>
+              <p className="font-display text-3xl font-bold">AI-Powered</p>
+              <p className="mt-1 text-sm text-muted-foreground">Smart Agriculture</p>
             </div>
           </div>
         </div>
