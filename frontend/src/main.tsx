@@ -6,6 +6,7 @@ import { AppRoutes } from '@/routes';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ToastProvider } from '@/contexts/ToastContext';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import '@/index.css';
 
 const container = document.getElementById('root');
@@ -16,17 +17,19 @@ if (!container) {
 
 createRoot(container).render(
   <StrictMode>
-    {/* The v7 future flags are opted in explicitly: they are behaviour
-        compatible with the current routes and they silence the upgrade
-        warnings that React Router prints on every navigation. */}
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <ThemeProvider>
-        <ToastProvider>
-          <AuthProvider>
-            <AppRoutes />
-          </AuthProvider>
-        </ToastProvider>
-      </ThemeProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      {/* The v7 future flags are opted in explicitly: they are behaviour
+          compatible with the current routes and they silence the upgrade
+          warnings that React Router prints on every navigation. */}
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ThemeProvider>
+          <ToastProvider>
+            <AuthProvider>
+              <AppRoutes />
+            </AuthProvider>
+          </ToastProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   </StrictMode>,
 );
