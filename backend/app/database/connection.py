@@ -85,14 +85,56 @@ class DatabaseManager:
             )
             return True
         except PyMongoError as exc:
-            self._last_error = type(exc).__name__
-            logger.error("Failed to connect to MongoDB: %s", type(exc).__name__)
+            err_type = type(exc).__name__
+            category = self._classify_error(exc)
+            # Store the human-readable category (never the URI) so the health
+            # endpoint and 503 responses explain *why* the database is down.
+            self._last_error = category
+            # Log safe diagnostics without exposing secrets
+            msg = str(exc)
+            # Avoid leaking connection strings in logs
+            if "mongodb://" in msg.lower() or "mongodb+srv://" in msg.lower():
+                msg = err_type
+            logger.error(
+                "Failed to connect to MongoDB: %s (%s) - %s", err_type, category, msg
+            )
             self._connected = False
             self._database = None
             if self._client is not None:
-                await self._client.close()
+                try:
+                    await self._client.close()
+                except Exception:
+                    pass
                 self._client = None
             return False
+
+    @staticmethod
+    def _classify_error(exc: PyMongoError) -> str:
+        """Return a safe, human-readable failure category.
+
+        Never includes the URI or credentials.
+        """
+        name = type(exc).__name__
+        text = str(exc).lower()
+
+        # TLS problems surface inside ServerSelectionTimeoutError, so they must
+        # be checked before the generic server-selection branch.
+        if "tlsv1_alert" in text or "ssl handshake failed" in text or "certificate" in text:
+            return (
+                "TLS handshake rejected (check the Atlas IP access list, "
+                "cluster paused state, or a proxy/NAT64/VPN interfering with TLS)"
+            )
+        if "authentication" in text or "auth failed" in text:
+            return "Authentication failure (check the database user credentials)"
+        if "name or service not known" in text or "nodename" in text or "dns" in text:
+            return "DNS/cluster hostname resolution failure"
+        if "timed out" in text or "timeout" in text:
+            return "Network timeout or blocked outbound connection"
+        if name == "ServerSelectionTimeoutError":
+            return "Server selection failed (Atlas IP access list / cluster availability)"
+        if "ConfigurationError" in name:
+            return "Invalid MongoDB URI or configuration"
+        return "Unknown connection error"
 
     async def disconnect(self) -> None:
         if self._client is not None:

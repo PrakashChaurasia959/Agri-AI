@@ -61,7 +61,13 @@ export function ImageCarousel() {
             src={image.src}
             alt={image.alt}
             className="w-full h-full object-cover"
-            loading={index === 0 ? 'eager' : 'lazy'}
+            // All slides are part of the auto-advancing carousel and are
+            // technically in the viewport, but with `opacity-0`. Chromium's
+            // lazy-loading heuristic refuses to fetch them in that state, so
+            // the carousel would fade to a blank slide. Eager-load all four
+            // (they are local assets) and let the browser decode async.
+            loading="eager"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
         </div>

@@ -103,6 +103,9 @@ export function CropRecommendationPage() {
       if (caught instanceof ApiError && caught.status === 503) {
         setModelUnavailable(true);
         setResult(null);
+      } else if (caught instanceof ApiError && caught.status === 401) {
+        setError('Please sign in to get crop recommendations.');
+        toast.error('Authentication required', 'Please sign in to continue.');
       } else {
         const message =
           caught instanceof Error ? caught.message : 'The recommendation failed.';

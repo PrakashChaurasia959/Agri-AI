@@ -24,7 +24,11 @@ class Settings(BaseSettings):
     """Environment-driven settings for the AgriVision AI API."""
 
     model_config = SettingsConfigDict(
-        env_file=(BACKEND_ROOT / ".env", BACKEND_ROOT.parent / ".env"),
+        # Order matters: later files win. ``backend/.env`` is the authoritative
+        # location for backend secrets, so it must be loaded *after* the
+        # project-root ``.env`` fallback. Real process environment variables
+        # always take precedence over both.
+        env_file=(BACKEND_ROOT.parent / ".env", BACKEND_ROOT / ".env"),
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",

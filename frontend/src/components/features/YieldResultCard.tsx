@@ -2,12 +2,13 @@ import { Scale, TrendingUp } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Alert } from '@/components/ui/Alert';
-import { formatMetric, formatNumber } from '@/utils/format';
+import { formatMetric, formatNumber, scalarMetrics } from '@/utils/format';
 import type { YieldPrediction } from '@/types';
 
 export function YieldResultCard({ result }: { result: YieldPrediction }) {
   const areaHa =
     typeof result.input_summary?.area_ha === 'number' ? result.input_summary.area_ha : null;
+  const metrics = scalarMetrics(result.metrics);
 
   return (
     <div className="space-y-4">
@@ -60,11 +61,11 @@ export function YieldResultCard({ result }: { result: YieldPrediction }) {
             </div>
           ) : null}
 
-          {Object.keys(result.metrics).length ? (
+          {metrics.length ? (
             <div>
               <h4 className="mb-2 text-sm font-semibold">Model metrics</h4>
               <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {Object.entries(result.metrics).map(([key, value]) => (
+                {metrics.map(([key, value]) => (
                   <div key={key} className="rounded-xl border border-border p-3">
                     <dt className="truncate text-xs capitalize text-muted-foreground">
                       {key.replace(/_/g, ' ')}

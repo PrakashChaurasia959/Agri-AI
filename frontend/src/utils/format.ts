@@ -25,25 +25,39 @@ export function formatDate(value: string | null | undefined): string {
   return dateFormatter.format(parsed);
 }
 
-export function formatNumber(value: number | null | undefined): string {
-  if (value === null || value === undefined || Number.isNaN(value)) return '—';
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+export function formatNumber(value: unknown): string {
+  if (!isFiniteNumber(value)) return '—';
   return numberFormatter.format(value);
 }
 
-export function formatPercent(
-  value: number | null | undefined,
-  fractionDigits = 1,
-): string {
-  if (value === null || value === undefined || Number.isNaN(value)) return '—';
+export function formatPercent(value: unknown, fractionDigits = 1): string {
+  if (!isFiniteNumber(value)) return '—';
   return `${(value * 100).toFixed(fractionDigits)}%`;
 }
 
-export function formatMetric(
-  value: number | null | undefined,
-  fractionDigits = 3,
-): string {
-  if (value === null || value === undefined || Number.isNaN(value)) return '—';
+export function formatMetric(value: unknown, fractionDigits = 3): string {
+  if (!isFiniteNumber(value)) return '—';
   return value.toFixed(fractionDigits);
+}
+
+/**
+ * Return only the scalar entries of a model-metrics object.
+ *
+ * Metadata such as ``per_class`` is a nested object, not a number, so feeding
+ * it to ``toFixed`` used to crash the result cards. Rendering only numeric
+ * metrics keeps the summary honest and the UI stable.
+ */
+export function scalarMetrics(
+  metrics: Record<string, unknown> | null | undefined,
+): Array<[string, number]> {
+  if (!metrics) return [];
+  return Object.entries(metrics).filter((entry): entry is [string, number] =>
+    isFiniteNumber(entry[1]),
+  );
 }
 
 /** Turn `Tomato___Late_blight` into `Tomato - Late blight`. */

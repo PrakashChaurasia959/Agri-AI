@@ -49,3 +49,6 @@ httpx==0.28.1
 pytest==8.3.4
 pytest-asyncio==0.25.0
 pytest-cov==6.0.0
+# mongomock backs `app.database.memory`, which the test-suite uses as an
+# in-process MongoDB emulator. It is required by backend/tests/conftest.py.
+mongomock==4.3.0

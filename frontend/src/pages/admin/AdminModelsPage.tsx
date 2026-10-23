@@ -7,7 +7,7 @@ import { SkeletonRows } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/States';
 import { useAsync } from '@/hooks/useAsync';
 import { adminService } from '@/services';
-import { formatMetric, formatPercent } from '@/utils/format';
+import { formatMetric, formatPercent, scalarMetrics } from '@/utils/format';
 
 export function AdminModelsPage() {
   const models = useAsync(() => adminService.models(), []);
@@ -137,23 +137,27 @@ export function AdminModelsPage() {
                   </p>
                 )}
 
-                {Object.keys(model.metrics ?? {}).length ? (
-                  <div>
-                    <h4 className="mb-2 text-sm font-semibold">Measured metrics</h4>
-                    <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                      {Object.entries(model.metrics).map(([key, value]) => (
-                        <div key={key} className="rounded-xl border border-border p-3">
-                          <dt className="truncate text-xs capitalize text-muted-foreground">
-                            {key.replace(/_/g, ' ')}
-                          </dt>
-                          <dd className="font-display text-base font-semibold">
-                            {formatMetric(value, 4)}
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </div>
-                ) : null}
+                {(() => {
+                  const metrics = scalarMetrics(model.metrics);
+                  if (!metrics.length) return null;
+                  return (
+                    <div>
+                      <h4 className="mb-2 text-sm font-semibold">Measured metrics</h4>
+                      <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                        {metrics.map(([key, value]) => (
+                          <div key={key} className="rounded-xl border border-border p-3">
+                            <dt className="truncate text-xs capitalize text-muted-foreground">
+                              {key.replace(/_/g, ' ')}
+                            </dt>
+                            <dd className="font-display text-base font-semibold">
+                              {formatMetric(value, 4)}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                  );
+                })()}
 
                 {model.artifact_path ? (
                   <p className="truncate font-mono text-xs text-muted-foreground">

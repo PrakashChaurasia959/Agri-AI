@@ -165,13 +165,24 @@ export async function apiRequest<T>(
     }
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...rest,
-    method,
-    headers: finalHeaders,
-    credentials: 'include',
-    body: json !== undefined ? JSON.stringify(json) : body,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...rest,
+      method,
+      headers: finalHeaders,
+      credentials: 'include',
+      body: json !== undefined ? JSON.stringify(json) : body,
+    });
+  } catch (error) {
+    throw new ApiError(
+      'Network error: Unable to reach the server. Please check if the backend is running on http://127.0.0.1:8000',
+      0,
+      null,
+      {},
+      null,
+    );
+  }
 
   if (response.status === 401 && !skipRefresh && retries > 0) {
     const refreshed = await refreshSession();

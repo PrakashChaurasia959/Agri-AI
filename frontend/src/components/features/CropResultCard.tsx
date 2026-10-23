@@ -4,10 +4,11 @@ import { Badge } from '@/components/ui/Badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { Alert } from '@/components/ui/Alert';
-import { formatMetric } from '@/utils/format';
+import { formatMetric, scalarMetrics } from '@/utils/format';
 import type { CropRecommendation } from '@/types';
 
 export function CropResultCard({ result }: { result: CropRecommendation }) {
+  const metrics = scalarMetrics(result.metrics);
   return (
     <div className="space-y-4">
       <Card>
@@ -66,11 +67,11 @@ export function CropResultCard({ result }: { result: CropRecommendation }) {
             )}
           </div>
 
-          {Object.keys(result.metrics).length ? (
+          {metrics.length ? (
             <div>
               <h4 className="mb-2 text-sm font-semibold">Model metrics</h4>
               <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {Object.entries(result.metrics).map(([key, value]) => (
+                {metrics.map(([key, value]) => (
                   <div key={key} className="rounded-xl border border-border p-3">
                     <dt className="truncate text-xs capitalize text-muted-foreground">
                       {key.replace(/_/g, ' ')}

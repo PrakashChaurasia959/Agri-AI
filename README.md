@@ -225,6 +225,42 @@ BACKEND_URL=http://localhost:8000
 WEATHER_API_KEY=                # optional - Open-Meteo needs none
 ```
 
+`backend/.env` takes precedence over the repository-root `.env`, so put backend
+secrets in `backend/.env`. Real process environment variables always win over both
+files. Empty values are parsed as empty, so do not leave a blank `MONGODB_URI=`
+in the root `.env` expecting it to fall back to `backend/.env` - configure it once,
+in `backend/.env`.
+
+### MongoDB Atlas setup
+
+1. In the Atlas console open your cluster, then **Connect -> Drivers**.
+2. Choose Python and copy the `mongodb+srv://...` connection string. It contains a
+   placeholder password; never paste the real string into a chat, an issue or a
+   commit.
+3. In **Database Access**, create a database user with the minimum role
+   (`readWrite` on `agrivision_ai`). Use a unique password.
+4. In **Network Access**, add the public egress IP of the machine that runs the
+   backend (**Add Current IP Address** while on that network). Cloud/CI runners
+   need their own egress IP; `0.0.0.0/0` is not recommended.
+5. Put the string in `backend/.env` yourself:
+
+   ```ini
+   MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority
+   MONGODB_DB_NAME=agrivision_ai
+   ```
+
+6. Diagnose connectivity without leaking the secret:
+
+   ```bash
+   cd backend
+   python scripts/check_mongodb.py
+   ```
+
+The script separates an empty URI, DNS/SRV failure, TLS rejection, timeout, and
+authentication failure, and never prints the URI or password. Exit codes: `0` ping
+OK, `1` configuration missing, `2` network/TLS/access-list problem, `3` auth/driver
+error.
+
 Optional overrides (all have safe defaults):
 
 | Variable | Default | Purpose |
